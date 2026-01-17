@@ -72,7 +72,7 @@ const App: React.FC = () => {
     setResult(quizResult);
     setStage(AppStage.RESULT);
     
-    // 直接從數據中獲取靜態圖片
+    // 直接從靜態資源獲取路徑
     const portrait = await generateSpiritPortrait(SPIRIT_DATA[dominant], dominant);
     setPortraitUrl(portrait);
   };
@@ -131,8 +131,13 @@ const App: React.FC = () => {
               <h1 className="text-6xl md:text-7xl font-black text-green-900 mb-2 opacity-0 animate-fade-in-up">
                 新年覺醒之旅
               </h1>
-              <div className="space-y-3 text-lg md:text-xl text-green-800/80 font-medium">
-                <p className="opacity-0 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>你，一隻新芽小精靈，正從世界樹下甦醒。</p>
+              <div className="space-y-4 text-lg md:text-xl text-green-800/80 font-medium leading-relaxed">
+                <p className="opacity-0 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+                  新年的晨光灑落，世界樹低聲吟唱，願望種子輕輕落下……<br />
+                  你，一隻新芽小精靈，從柔軟的樹根中醒來。<br />
+                  翅膀輕輕顫動，手中握著微溫的願望種子。<br />
+                  這個新年，你的成長之旅，即將展開。
+                </p>
               </div>
             </div>
 
@@ -187,7 +192,20 @@ const App: React.FC = () => {
               <div className="mb-8 flex justify-center">
                 <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-[3rem] overflow-hidden border-4 border-white/30 shadow-2xl bg-white/10 backdrop-blur-sm">
                   {portraitUrl ? (
-                    <img src={portraitUrl} alt="Spirit Portrait" className="w-full h-full object-cover animate-in fade-in duration-1000" />
+                    <img 
+                      key={portraitUrl}
+                      src={portraitUrl} 
+                      alt="Spirit Portrait" 
+                      className="w-full h-full object-cover animate-in fade-in duration-1000"
+                      onError={(e) => {
+                        console.error("Image failed to load:", portraitUrl);
+                        // 如果相對路徑失敗，嘗試移除前面的點
+                        const target = e.target as HTMLImageElement;
+                        if (target.src.includes('./')) {
+                          target.src = portraitUrl.replace('./', '');
+                        }
+                      }}
+                    />
                   ) : (
                     <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4 text-white/40">
                       <ImageIcon size={48} />
