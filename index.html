@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新芽小精靈：新年覺醒之旅</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* 優先使用獅尾四季春，備選為 Noto Serif TC */
+        body {
+            font-family: 'Swei Shikishun', 'Swei Shikishun Mono', 'Noto Serif TC', serif;
+            background-color: #f0f4f0;
+            overflow-x: hidden;
+            font-style: normal !important;
+        }
+        
+        /* 強制移除所有可能的斜體 */
+        i, em, .italic, blockquote {
+            font-style: normal !important;
+        }
+
+        .forest-gradient {
+            background: linear-gradient(135deg, #134e4a 0%, #064e3b 100%);
+        }
+        .sprout-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        @keyframes shimmer {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.5); }
+        }
+        .animate-shimmer {
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        .mist-overlay {
+            background: radial-gradient(circle at center, transparent 0%, rgba(255, 255, 255, 0.4) 100%);
+            pointer-events: none;
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.37.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0"
+  }
+}
+</script>
+</head>
+<body>
+    <div id="root"></div>
+</body>
+</html>
