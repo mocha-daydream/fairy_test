@@ -1,9 +1,8 @@
 
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 import { SpiritType, SpiritInfo } from "./types";
 
 export async function getSproutOracle(spirit: SpiritInfo, wish: string) {
-  // 每次呼叫時才建立實例，確保獲取最新金鑰
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   const prompt = `
@@ -49,65 +48,6 @@ export async function getSproutOracle(spirit: SpiritInfo, wish: string) {
 }
 
 export async function generateSpiritPortrait(spirit: SpiritInfo, type: SpiritType): Promise<string | null> {
-  // 升級影像模型至 gemini-3-pro-image-preview
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-  
-  const baseArtStyle = `
-    Whimsical storybook illustration, digital watercolor style. 
-    Character: Cute 2-head-high Chibi sprout spirit with a round soft face and simple black dot eyes. 
-    Technique: Delicate pencil sketch outlines, soft watercolor washes with gentle color bleeding, visible cold-press paper grain. 
-    Background: Minimalist off-white watercolor paper with subtle artistic paint splashes. 
-    Atmosphere: Healing, warm ethereal lighting, golden glowing particles. 
-    STRICTLY NO TEXT, NO LETTERS, NO WORDS, NO SIGNATURES.
-  `;
-
-  let characterSpecific = "";
-  switch(type) {
-    case SpiritType.AUTONOMY:
-      characterSpecific = `A Wind Sprout Spirit. Colors: Pale blue and cloud white. Head leaves: Shaped like bird wings. Hair: Fluffy cloud-like hair. Accessories: Light wind bells.`;
-      break;
-    case SpiritType.COMPETENCE:
-      characterSpecific = `A Forge Sprout Spirit. Colors: Warm red and orange. Head leaves: Flickering flames. Hair: Messy fire hair. Accessories: A small wooden torch.`;
-      break;
-    case SpiritType.RELATEDNESS:
-      characterSpecific = `A Light Sprout Spirit. Colors: Warm yellow and golden. Head leaves: Sun shaped. Hair: Smooth glossy hair. Accessories: A delicate small lantern.`;
-      break;
-    case SpiritType.GROWTH:
-      characterSpecific = `A Forest Sprout Spirit. Colors: Deep green. Head leaves: Large lush tree leaves. Hair: Vine-like hair. Accessories: A small wooden flute.`;
-      break;
-  }
-
-  const finalPrompt = `${characterSpecific} ${baseArtStyle} Centered composition.`;
-
-  try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-3-pro-image-preview',
-      contents: {
-        parts: [{ text: finalPrompt }]
-      },
-      config: {
-        imageConfig: {
-          aspectRatio: "1:1",
-          imageSize: "1K"
-        }
-      }
-    });
-
-    if (response.candidates && response.candidates[0].content.parts) {
-      for (const part of response.candidates[0].content.parts) {
-        if (part.inlineData) {
-          return `data:image/png;base64,${part.inlineData.data}`;
-        }
-      }
-    }
-    return null;
-  } catch (error: any) {
-    console.error("Image Generation Error:", error);
-    // 如果出現特定錯誤，可能需要重新選取 Key
-    if (error.message && error.message.includes("Requested entity was not found")) {
-        // 交由 UI 層級處理
-        throw error;
-    }
-    return null;
-  }
+  // 現在我們使用靜態圖片，直接返回預設的 URL
+  return spirit.imageUrl;
 }

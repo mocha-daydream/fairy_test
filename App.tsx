@@ -4,31 +4,19 @@ import { AppStage, SpiritType, QuizResult } from './types';
 import { QUESTIONS, SPIRIT_DATA } from './constants';
 import { getSproutOracle, generateSpiritPortrait } from './geminiService';
 import { 
-  Trees, 
   Sparkles, 
   ChevronRight, 
   Leaf, 
   RefreshCcw, 
   Send,
   Loader2,
-  Wind,
-  Sun,
-  Droplets,
   BookOpen,
   Users,
   Trophy,
   Compass,
-  Zap,
-  CloudFog,
-  Star,
   Quote,
-  Heart,
-  ImageIcon,
-  Lock
+  ImageIcon
 } from 'lucide-react';
-
-// aistudio is pre-configured and accessible globally as AIStudio type in this environment.
-// We remove the local declaration to avoid conflicts with the system-provided definition.
 
 const App: React.FC = () => {
   const [stage, setStage] = useState<AppStage>(AppStage.LANDING);
@@ -39,30 +27,6 @@ const App: React.FC = () => {
   const [oracle, setOracle] = useState('');
   const [isLoadingOracle, setIsLoadingOracle] = useState(false);
   const [portraitUrl, setPortraitUrl] = useState<string | null>(null);
-  const [isLoadingPortrait, setIsLoadingPortrait] = useState(false);
-  const [hasKey, setHasKey] = useState(true);
-
-  useEffect(() => {
-    checkKeyStatus();
-  }, []);
-
-  const checkKeyStatus = async () => {
-    // Access window.aistudio using any-casting to bypass potential conflicting global type definitions
-    const aistudio = (window as any).aistudio;
-    if (aistudio) {
-      const selected = await aistudio.hasSelectedApiKey();
-      setHasKey(selected);
-    }
-  };
-
-  const handleOpenKeySelector = async () => {
-    const aistudio = (window as any).aistudio;
-    if (aistudio) {
-      await aistudio.openSelectKey();
-      // Assume the key selection was successful after triggering openSelectKey to mitigate race conditions
-      setHasKey(true); 
-    }
-  };
 
   const resetApp = () => {
     setStage(AppStage.LANDING);
@@ -108,19 +72,9 @@ const App: React.FC = () => {
     setResult(quizResult);
     setStage(AppStage.RESULT);
     
-    setIsLoadingPortrait(true);
-    try {
-      const portrait = await generateSpiritPortrait(SPIRIT_DATA[dominant], dominant);
-      setPortraitUrl(portrait);
-    } catch (err: any) {
-      // If the request fails with an error message containing "Requested entity was not found.",
-      // it means the key might be invalid or from an unpaid project.
-      if (err.message?.includes("Requested entity was not found")) {
-        setHasKey(false);
-      }
-    } finally {
-      setIsLoadingPortrait(false);
-    }
+    // 直接從數據中獲取靜態圖片
+    const portrait = await generateSpiritPortrait(SPIRIT_DATA[dominant], dominant);
+    setPortraitUrl(portrait);
   };
 
   const generateOracle = async () => {
@@ -144,38 +98,6 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen relative flex flex-col items-center justify-center p-4 bg-[#f0f7f4] text-[#2d4030]">
-      {/* API Key Status Reminder */}
-      {!hasKey && (
-        <div className="fixed inset-0 z-[100] bg-green-950/80 backdrop-blur-md flex items-center justify-center p-6 text-center">
-          <div className="bg-white p-10 rounded-[2.5rem] shadow-2xl max-w-md space-y-6 border-4 border-green-200">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto text-green-700 animate-pulse">
-              <Lock size={40} />
-            </div>
-            <h3 className="text-2xl font-black text-green-900">啟動精靈顯化之力</h3>
-            <p className="text-green-800/70 leading-relaxed">
-              為了生成高品質的精靈肖像，我們需要您連結一個具備付款權限的 Google API Key。
-              這不會產生額外費用（除非超過免費額度）。
-            </p>
-            <div className="space-y-4 pt-4">
-              <button 
-                onClick={handleOpenKeySelector}
-                className="w-full py-4 bg-green-700 text-white rounded-2xl font-bold text-lg hover:bg-green-800 transition-all flex items-center justify-center gap-2"
-              >
-                連結 API Key <Sparkles size={20} />
-              </button>
-              <a 
-                href="https://ai.google.dev/gemini-api/docs/billing" 
-                target="_blank" 
-                rel="noreferrer"
-                className="block text-sm text-green-600 underline font-bold"
-              >
-                了解計費與金鑰規範
-              </a>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Misty Background & Particles */}
       <div className="absolute inset-0 mist-overlay z-0" />
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
@@ -214,7 +136,7 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: '2.2s' }}>
+            <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: '1.2s' }}>
               <button 
                 onClick={() => setStage(AppStage.QUIZ)}
                 className="group relative px-16 py-6 bg-green-700 hover:bg-green-800 text-white rounded-full text-2xl font-bold transition-all shadow-2xl"
@@ -250,7 +172,7 @@ const App: React.FC = () => {
         )}
 
         {stage === AppStage.RESULT && result && (
-          <div className="space-y-8 animate-in zoom-in-95 duration-1000">
+          <div className="space-y-8 animate-in zoom-in-95 duration-700">
             <div className={`p-10 md:p-16 rounded-[3rem] shadow-2xl bg-gradient-to-br ${SPIRIT_DATA[result.dominantType].color} text-white relative`}>
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
                 <div className="space-y-2">
@@ -264,17 +186,11 @@ const App: React.FC = () => {
 
               <div className="mb-8 flex justify-center">
                 <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-[3rem] overflow-hidden border-4 border-white/30 shadow-2xl bg-white/10 backdrop-blur-sm">
-                  {isLoadingPortrait ? (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4">
-                      <Loader2 className="animate-spin text-white opacity-60" size={48} />
-                      <p className="text-sm font-bold tracking-widest uppercase opacity-80 animate-pulse">【新芽顯化中...🌱】</p>
-                    </div>
-                  ) : portraitUrl ? (
+                  {portraitUrl ? (
                     <img src={portraitUrl} alt="Spirit Portrait" className="w-full h-full object-cover animate-in fade-in duration-1000" />
                   ) : (
                     <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4 text-white/40">
                       <ImageIcon size={48} />
-                      <button onClick={() => calculateResult(answers)} className="text-sm underline text-white font-bold">重新顯化</button>
                     </div>
                   )}
                 </div>

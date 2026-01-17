@@ -113,7 +113,8 @@ export const SPIRIT_DATA: Record<SpiritType, SpiritInfo> = {
     advice: ["每週選一天完全不按計畫行事", "在筆記本寫下三個「我最想做」的純粹決定", "去一個從未去過的森林角落散步"],
     color: "from-sky-400 to-indigo-500",
     traits: ["自主探索", "自由之翼", "獨特節奏"],
-    motto: "風從不問方向，因為心在哪裡，路就在哪裡。"
+    motto: "風從不問方向，因為心在哪裡，路就在哪裡。",
+    imageUrl: "input_file_1.png"
   },
   [SpiritType.COMPETENCE]: {
     name: "鍛芽精靈",
@@ -123,7 +124,8 @@ export const SPIRIT_DATA: Record<SpiritType, SpiritInfo> = {
     advice: ["將大挑戰拆解成三個微型勝利", "練習在挫折後對自己說「我已經盡力且很棒了」", "嘗試一項完全不計成敗的純粹愛好"],
     color: "from-slate-600 to-emerald-900",
     traits: ["能力卓越", "突破自我", "目標導向"],
-    motto: "最堅硬的磐石，也曾是一粒勇敢的種子。"
+    motto: "最堅硬的磐石，也曾是一粒勇敢的種子。",
+    imageUrl: "input_file_3.png"
   },
   [SpiritType.RELATEDNESS]: {
     name: "光芽精靈",
@@ -133,7 +135,8 @@ export const SPIRIT_DATA: Record<SpiritType, SpiritInfo> = {
     advice: ["寫一封信給很久沒聯絡的知心好友", "練習在群體中勇敢說出自己的真實需求", "每天給予身邊的人一個真心且具體的讚美"],
     color: "from-rose-400 to-amber-500",
     traits: ["溫暖陪伴", "情感連結", "共感之光"],
-    motto: "當我們交會時，整片森林都亮了起來。"
+    motto: "當我們交會時，整片森林都亮了起來。",
+    imageUrl: "input_file_0.png"
   },
   [SpiritType.GROWTH]: {
     name: "森芽精靈",
@@ -143,6 +146,7 @@ export const SPIRIT_DATA: Record<SpiritType, SpiritInfo> = {
     advice: ["記錄下一件今天雖然失敗但學到的事", "找一位長輩或智者，聊聊生命中的轉折", "為自己種下一盆植物，觀察它緩慢生長的節奏"],
     color: "from-yellow-400 to-green-600",
     traits: ["持續蛻變", "學習熱情", "韌性成長"],
-    motto: "不求瞬間綻放，但求日日生長。"
+    motto: "不求瞬間綻放，但求日日生長。",
+    imageUrl: "input_file_2.png"
   }
 };

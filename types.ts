@@ -32,6 +32,7 @@ export interface SpiritInfo {
   color: string;
   traits: string[];
   motto: string;
+  imageUrl: string;
 }
 
 export interface QuizResult {
