@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { AppStage, SpiritType, QuizResult } from './types';
 import { QUESTIONS, SPIRIT_DATA } from './constants';
-import { getSproutOracle, generateSpiritPortrait } from './geminiService';
+import { getSproutOracle, generateSpiritPortrait, generateAIImage } from './geminiService';
 import { 
   Sparkles, 
   ChevronRight, 
@@ -15,7 +15,8 @@ import {
   Trophy,
   Compass,
   Quote,
-  ImageIcon
+  ImageIcon,
+  Wand2
 } from 'lucide-react';
 
 const App: React.FC = () => {
@@ -27,6 +28,8 @@ const App: React.FC = () => {
   const [oracle, setOracle] = useState('');
   const [isLoadingOracle, setIsLoadingOracle] = useState(false);
   const [portraitUrl, setPortraitUrl] = useState<string | null>(null);
+  const [imageError, setImageError] = useState(false);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
   const resetApp = () => {
     setStage(AppStage.LANDING);
@@ -36,6 +39,8 @@ const App: React.FC = () => {
     setWish('');
     setOracle('');
     setPortraitUrl(null);
+    setImageError(false);
+    setIsGeneratingImage(false);
   };
 
   const handleAnswer = (type: SpiritType) => {
@@ -72,9 +77,19 @@ const App: React.FC = () => {
     setResult(quizResult);
     setStage(AppStage.RESULT);
     
-    // 直接從靜態資源獲取路徑
     const portrait = await generateSpiritPortrait(SPIRIT_DATA[dominant], dominant);
     setPortraitUrl(portrait);
+  };
+
+  const handleAwakenTrueForm = async () => {
+    if (!result) return;
+    setIsGeneratingImage(true);
+    const aiImage = await generateAIImage(SPIRIT_DATA[result.dominantType], wish || "美好的未來");
+    if (aiImage) {
+      setPortraitUrl(aiImage);
+      setImageError(false);
+    }
+    setIsGeneratingImage(false);
   };
 
   const generateOracle = async () => {
@@ -98,7 +113,6 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen relative flex flex-col items-center justify-center p-4 bg-[#f0f7f4] text-[#2d4030]">
-      {/* Misty Background & Particles */}
       <div className="absolute inset-0 mist-overlay z-0" />
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         {[...Array(20)].map((_, i) => (
@@ -126,11 +140,8 @@ const App: React.FC = () => {
                 <Sparkles className="absolute -top-2 -right-2 text-yellow-400 animate-pulse" size={32} />
               </div>
             </div>
-
             <div className="space-y-6">
-              <h1 className="text-6xl md:text-7xl font-black text-green-900 mb-2 opacity-0 animate-fade-in-up">
-                新年覺醒之旅
-              </h1>
+              <h1 className="text-6xl md:text-7xl font-black text-green-900 mb-2 opacity-0 animate-fade-in-up">新年覺醒之旅</h1>
               <div className="space-y-4 text-lg md:text-xl text-green-800/80 font-medium leading-relaxed">
                 <p className="opacity-0 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
                   新年的晨光灑落，世界樹低聲吟唱，願望種子輕輕落下……<br />
@@ -140,7 +151,6 @@ const App: React.FC = () => {
                 </p>
               </div>
             </div>
-
             <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: '1.2s' }}>
               <button 
                 onClick={() => setStage(AppStage.QUIZ)}
@@ -159,9 +169,7 @@ const App: React.FC = () => {
                 醒覺度 {currentQuestion + 1} / {QUESTIONS.length}
               </span>
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-green-950 leading-tight">
-              {QUESTIONS[currentQuestion].text}
-            </h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-green-950 leading-tight">{QUESTIONS[currentQuestion].text}</h2>
             <div className="grid gap-4">
               {QUESTIONS[currentQuestion].options.map((opt, idx) => (
                 <button
@@ -189,35 +197,51 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              <div className="mb-8 flex justify-center">
-                <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-[3rem] overflow-hidden border-4 border-white/30 shadow-2xl bg-white/10 backdrop-blur-sm">
-                  {portraitUrl ? (
+              <div className="mb-8 flex flex-col items-center gap-6">
+                <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-[3rem] overflow-hidden border-4 border-white/40 shadow-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center">
+                  {isGeneratingImage && (
+                    <div className="absolute inset-0 z-20 bg-black/40 backdrop-blur-md flex flex-col items-center justify-center text-white p-6 text-center">
+                      <Loader2 className="animate-spin mb-4" size={48} />
+                      <p className="font-bold">正在召喚精靈真身...</p>
+                    </div>
+                  )}
+                  {portraitUrl && !imageError ? (
                     <img 
                       key={portraitUrl}
                       src={portraitUrl} 
                       alt="Spirit Portrait" 
                       className="w-full h-full object-cover animate-in fade-in duration-1000"
                       onError={(e) => {
-                        console.error("Image failed to load:", portraitUrl);
-                        // 如果相對路徑失敗，嘗試移除前面的點
+                        console.warn("Retrying image load with clean path...");
                         const target = e.target as HTMLImageElement;
                         if (target.src.includes('./')) {
                           target.src = portraitUrl.replace('./', '');
+                        } else {
+                          setImageError(true);
                         }
                       }}
                     />
                   ) : (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4 text-white/40">
-                      <ImageIcon size={48} />
+                    <div className="flex flex-col items-center justify-center text-white/60 p-8 text-center gap-4">
+                      <ImageIcon size={48} className="opacity-40" />
+                      <p className="text-sm font-medium">森林迷霧太濃，無法看清精靈模樣...</p>
                     </div>
                   )}
                 </div>
+                {imageError && !isGeneratingImage && (
+                  <button 
+                    onClick={handleAwakenTrueForm}
+                    className="flex items-center gap-2 px-6 py-3 bg-white/20 hover:bg-white/30 border border-white/40 rounded-full text-white font-bold transition-all animate-pulse"
+                  >
+                    <Wand2 size={20} /> 召喚精靈真身 (AI 生成)
+                  </button>
+                )}
               </div>
 
               <div className="space-y-8">
                 <div className="relative">
                   <Quote className="absolute -top-6 -left-6 opacity-20" size={64} />
-                  <p className="text-2xl md:text-3xl text-center px-4 font-medium">{SPIRIT_DATA[result.dominantType].story}</p>
+                  <p className="text-2xl md:text-3xl text-center px-4 font-medium leading-relaxed italic-normal">{SPIRIT_DATA[result.dominantType].story}</p>
                 </div>
               </div>
             </div>
@@ -260,7 +284,7 @@ const App: React.FC = () => {
                   <p className="font-bold animate-pulse">正在轉化森林的低語...</p>
                 </div>
               ) : (
-                <div className="prose prose-green max-w-none text-green-950 whitespace-pre-line text-xl font-medium">
+                <div className="prose prose-green max-w-none text-green-950 whitespace-pre-line text-xl font-medium leading-loose">
                   {oracle}
                 </div>
               )}

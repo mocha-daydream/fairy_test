@@ -133,7 +133,7 @@ export const SPIRIT_DATA: Record<SpiritType, SpiritInfo> = {
     strength: "你天生擁有療癒他人的天賦，連結的力量是你靈魂最深的養分。你懂得傾聽風的低語，也能察覺夥伴眉間的陰影。這份共感力讓你成為森林的黏合劑。",
     caution: "太過在意他人的感受，有時會讓你像被雨淋濕的翅膀，沉重得飛不起來。保護好自己的光，你才能在不消耗自己的情況下，繼續溫暖整片森林。",
     advice: ["寫一封信給很久沒聯絡的知心好友", "練習在群體中勇敢說出自己的真實需求", "每天給予身邊的人一個真心且具體的讚美"],
-    color: "from-rose-400 to-amber-500",
+    color: "from-yellow-400 to-amber-500",
     traits: ["溫暖陪伴", "情感連結", "共感之光"],
     motto: "當我們交會時，整片森林都亮了起來。",
     imageUrl: "./input_file_0.png"
@@ -144,7 +144,7 @@ export const SPIRIT_DATA: Record<SpiritType, SpiritInfo> = {
     strength: "你擁有最珍貴的成長型思維，將變化視為生命的本質。你懂得在失敗中挖掘智慧，在時間的流轉中累積韌性。這份對未來的開放感，讓你無論身處何種季節，都能保有生命力。",
     caution: "有時你會因為成長的緩慢而感到沮喪。迷霧中，請安靜聽聽內心發芽的聲音。每一棵參天大樹都曾是沉默的種子，你的累積從未白費，只是還在等待破土的時機。",
     advice: ["記錄下一件今天雖然失敗但學到的事", "找一位長輩或智者，聊聊生命中的轉折", "為自己種下一盆植物，觀察它緩慢生長的節奏"],
-    color: "from-yellow-400 to-green-600",
+    color: "from-green-500 to-emerald-700",
     traits: ["持續蛻變", "學習熱情", "韌性成長"],
     motto: "不求瞬間綻放，但求日日生長。",
     imageUrl: "./input_file_2.png"
