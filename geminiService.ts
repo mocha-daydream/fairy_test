@@ -48,39 +48,6 @@ export async function getSproutOracle(spirit: SpiritInfo, wish: string) {
 }
 
 export async function generateSpiritPortrait(spirit: SpiritInfo, type: SpiritType): Promise<string | null> {
-  // 優先返回預設的本地靜態圖片
+  // 僅返回預設的本地靜態圖片路徑
   return spirit.imageUrl;
-}
-
-export async function generateAIImage(spirit: SpiritInfo, wish: string): Promise<string | null> {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-  
-  const prompt = `A mystical sprout spirit named "${spirit.name}" in a lush forest. 
-    Appearance style: Watercolor storybook illustration, soft edges, ethereal glow.
-    Specific features: ${spirit.traits.join(', ')}. 
-    Theme: New Year Awakening, Hope.
-    Concept: The spirit is holding or nurturing a glowing wish seed that represents "${wish}".
-    Art style: Studio Ghibli inspired naturalism mixed with gentle magic.`;
-
-  try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash-image',
-      contents: [{ parts: [{ text: prompt }] }],
-      config: {
-        imageConfig: {
-          aspectRatio: "1:1"
-        }
-      }
-    });
-
-    for (const part of response.candidates[0].content.parts) {
-      if (part.inlineData) {
-        return `data:image/png;base64,${part.inlineData.data}`;
-      }
-    }
-    return null;
-  } catch (error) {
-    console.error("Gemini Image Generation Error:", error);
-    return null;
-  }
 }

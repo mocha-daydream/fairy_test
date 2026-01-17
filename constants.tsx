@@ -113,7 +113,7 @@ export const SPIRIT_DATA: Record<SpiritType, SpiritInfo> = {
     advice: ["每週選一天完全不按計畫行事", "在筆記本寫下三個「我最想做」的純粹決定", "去一個從未去過的森林角落散步"],
     color: "from-sky-400 to-indigo-500",
     traits: ["自主探索", "自由之翼", "獨特節奏"],
-    motto: "風從不問方向，因為心在哪裡，路就在哪裡。",
+    motto: "風從不問方向，因為心在哪裡，路就在順延的微風中。",
     imageUrl: "./input_file_1.png"
   },
   [SpiritType.COMPETENCE]: {

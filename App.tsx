@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { AppStage, SpiritType, QuizResult } from './types';
 import { QUESTIONS, SPIRIT_DATA } from './constants';
-import { getSproutOracle, generateSpiritPortrait, generateAIImage } from './geminiService';
+import { getSproutOracle, generateSpiritPortrait } from './geminiService';
 import { 
   Sparkles, 
   ChevronRight, 
@@ -15,8 +15,7 @@ import {
   Trophy,
   Compass,
   Quote,
-  ImageIcon,
-  Wand2
+  ImageIcon
 } from 'lucide-react';
 
 const App: React.FC = () => {
@@ -29,7 +28,6 @@ const App: React.FC = () => {
   const [isLoadingOracle, setIsLoadingOracle] = useState(false);
   const [portraitUrl, setPortraitUrl] = useState<string | null>(null);
   const [imageError, setImageError] = useState(false);
-  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
   const resetApp = () => {
     setStage(AppStage.LANDING);
@@ -40,7 +38,6 @@ const App: React.FC = () => {
     setOracle('');
     setPortraitUrl(null);
     setImageError(false);
-    setIsGeneratingImage(false);
   };
 
   const handleAnswer = (type: SpiritType) => {
@@ -79,17 +76,6 @@ const App: React.FC = () => {
     
     const portrait = await generateSpiritPortrait(SPIRIT_DATA[dominant], dominant);
     setPortraitUrl(portrait);
-  };
-
-  const handleAwakenTrueForm = async () => {
-    if (!result) return;
-    setIsGeneratingImage(true);
-    const aiImage = await generateAIImage(SPIRIT_DATA[result.dominantType], wish || "美好的未來");
-    if (aiImage) {
-      setPortraitUrl(aiImage);
-      setImageError(false);
-    }
-    setIsGeneratingImage(false);
   };
 
   const generateOracle = async () => {
@@ -199,43 +185,23 @@ const App: React.FC = () => {
 
               <div className="mb-8 flex flex-col items-center gap-6">
                 <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-[3rem] overflow-hidden border-4 border-white/40 shadow-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center">
-                  {isGeneratingImage && (
-                    <div className="absolute inset-0 z-20 bg-black/40 backdrop-blur-md flex flex-col items-center justify-center text-white p-6 text-center">
-                      <Loader2 className="animate-spin mb-4" size={48} />
-                      <p className="font-bold">正在召喚精靈真身...</p>
-                    </div>
-                  )}
                   {portraitUrl && !imageError ? (
                     <img 
                       key={portraitUrl}
                       src={portraitUrl} 
                       alt="Spirit Portrait" 
                       className="w-full h-full object-cover animate-in fade-in duration-1000"
-                      onError={(e) => {
-                        console.warn("Retrying image load with clean path...");
-                        const target = e.target as HTMLImageElement;
-                        if (target.src.includes('./')) {
-                          target.src = portraitUrl.replace('./', '');
-                        } else {
-                          setImageError(true);
-                        }
+                      onError={() => {
+                        setImageError(true);
                       }}
                     />
                   ) : (
                     <div className="flex flex-col items-center justify-center text-white/60 p-8 text-center gap-4">
                       <ImageIcon size={48} className="opacity-40" />
-                      <p className="text-sm font-medium">森林迷霧太濃，無法看清精靈模樣...</p>
+                      <p className="text-sm font-medium">森林迷霧太濃，無法看清精靈模樣...<br/>(請確認圖片檔名正確且位於根目錄)</p>
                     </div>
                   )}
                 </div>
-                {imageError && !isGeneratingImage && (
-                  <button 
-                    onClick={handleAwakenTrueForm}
-                    className="flex items-center gap-2 px-6 py-3 bg-white/20 hover:bg-white/30 border border-white/40 rounded-full text-white font-bold transition-all animate-pulse"
-                  >
-                    <Wand2 size={20} /> 召喚精靈真身 (AI 生成)
-                  </button>
-                )}
               </div>
 
               <div className="space-y-8">
